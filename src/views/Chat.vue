@@ -67,6 +67,16 @@ function logout(){
   userStore.logout()
   router.push('/login')
 }
+
+
+// 在script部分添加格式化方法
+const formatMessageContent = (text: string) => {
+  return text
+    .replace(/ /g, '&nbsp;') // 转换空格
+    .replace(/\n/g, '<br/>') // 转换换行
+    .replace(/</g, '&lt;')   // 转义HTML标签
+    .replace(/>/g, '&gt;')
+}
 </script>
 
 <template>
@@ -85,9 +95,8 @@ function logout(){
         :key="index"
         :class="['message-bubble', message.type]"
       >
-        <div class="message-content">
-          {{ message.content }}
-        </div>
+        <!-- 在模板部分修改消息内容渲染方式 -->
+<div class="message-content" v-html="formatMessageContent(message.content)"></div>
       </div>
       <div v-if="loading" class="message-bubble ai">
         <div class="message-content loading">
@@ -97,7 +106,7 @@ function logout(){
     </div>
     
     <div class="input-area">
-      <div class="input-wrapper">
+      <div class="input-wrapper" >
         <textarea
           v-model="inputMessage"
           @keypress="handleKeyPress"
@@ -108,10 +117,9 @@ function logout(){
           @click="sendMessage" 
           :disabled="loading"
           class="send-btn"
+          
         >
-          <svg v-if="!loading" width="20" height="20" viewBox="0 0 24 24">
-            <path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-          </svg>
+        <svg v-if="!loading" t="1741339017017" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5762" ><path d="M311.04 692.224L97.28 598.5792a38.0416 38.0416 0 0 1-3.6352-67.84l799.1808-457.472a38.0416 38.0416 0 0 1 56.6272 37.7856L854.016 866.8672a37.9904 37.9904 0 0 1-53.9136 29.6448l-223.5392-105.1648L471.04 937.9328a42.752 42.752 0 0 1-77.4656-25.0368l0.6656-190.5664 387.7376-455.0144z" fill="red" p-id="5763"></path></svg>
           <div v-else class="loader"></div>
         </button>
       </div>
@@ -119,158 +127,163 @@ function logout(){
   </div>
 </template>
 
-<style scoped lang="scss">
+<style>
 .chat-container {
+  position: relative;
+  left: 25%;
   height: 100vh;
+  width: 100vh;
   display: flex;
   flex-direction: column;
   background: #f0f2f5;
+  white-space: pre-wrap; 
+  word-break: break-word; 
+}
 
-  .chat-header {
-    background: #fff;
-    padding: 0 24px;
-    height: 60px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #e8e8e8;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+.chat-container .chat-header {
+  background: #fff;
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e8e8e8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
 
-    h2 {
-      margin: 0;
-      font-size: 18px;
-      color: #1a1a1a;
-    }
+.chat-container .chat-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #1a1a1a;
+}
 
-    .header-controls {
-      display: flex;
-      align-items: center;
-      gap: 16px;
+.chat-container .chat-header .header-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
 
-      .username {
-        color: #666;
-        font-size: 14px;
-      }
+.chat-container .chat-header .header-controls .username {
+  color: #666;
+  font-size: 14px;
+}
 
-      .logout-btn {
-        padding: 6px 12px;
-        background: #f5f5f5;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.2s;
+.chat-container .chat-header .header-controls .logout-btn {
+  padding: 6px 12px;
+  background: #e4dfdf;
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
 
-        &:hover {
-          background: #eee;
-        }
-      }
-    }
-  }
+.chat-container .chat-header .header-controls .logout-btn:hover {
+  background: #fe3b3b;
+}
 
-  .messages-container {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    background: #fafafa;
+.chat-container .messages-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #fafafa;
+}
 
-    .message-bubble {
-      max-width: 70%;
-      padding: 8px 12px;
-      border-radius: 12px;
-      animation: fadeIn 0.3s ease-in;
+.chat-container .messages-container .message-bubble {
+  max-width: 70%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  animation: fadeIn 0.3s ease-in;
+}
 
-      &.user {
-        align-self: flex-end;
-        background: #1890ff;
-        color: white;
-        border-radius: 12px 12px 0 12px;
-      }
+.chat-container .messages-container .message-bubble.user {
+  align-self: flex-end;
+  background: #1890ff;
+  color: white;
+  border-radius: 12px 12px 0 12px;
+}
 
-      &.ai {
-        align-self: flex-start;
-        background: white;
-        border: 1px solid #e8e8e8;
-        border-radius: 12px 12px 12px 0;
-      }
+.chat-container .messages-container .message-bubble.ai {
+  align-self: flex-start;
+  background: white;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px 12px 12px 0;
+}
 
-      .message-content {
-        font-size: 14px;
-        line-height: 1.5;
-        
-        &.loading {
-          color: #999;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-      }
-    }
-  }
+.chat-container .messages-container .message-bubble .message-content {
+  font-size: 14px;
+  line-height: 1.5;
+}
 
-  .input-area {
-    background: white;
-    padding: 16px 24px;
-    border-top: 1px solid #e8e8e8;
+.chat-container .messages-container .message-bubble .message-content.loading {
+  color: #999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-    .input-wrapper {
-      position: relative;
-      display: flex;
-      gap: 12px;
-      align-items: flex-end;
+.chat-container .input-area {
+  background: white;
+  padding: 16px 24px;
+  border-top: 1px solid #e8e8e8;
+}
 
-      textarea {
-        flex: 1;
-        padding: 10px 12px;
-        border: 1px solid #e8e8e8;
-        border-radius: 8px;
-        resize: none;
-        font-size: 14px;
-        line-height: 1.5;
-        transition: all 0.2s;
+.chat-container .input-area .input-wrapper {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
 
-        &:focus {
-          outline: none;
-          border-color: #1890ff;
-          box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
-        }
-      }
+.chat-container .input-area .input-wrapper textarea {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  resize: none;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: all 0.2s;
+}
 
-      .send-btn {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #1890ff;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.2s;
-        color: white;
+.chat-container .input-area .input-wrapper textarea:focus {
+  outline: none;
+  border-color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
 
-        &:hover {
-          background: #40a9ff;
-        }
+.chat-container .input-area .input-wrapper .send-btn {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
 
-        &:disabled {
-          background: #bae7ff;
-          cursor: not-allowed;
-        }
+.chat-container .input-area .input-wrapper .send-btn:hover {
+  background: #40a9ff;
+}
 
-        .loader {
-          width: 20px;
-          height: 20px;
-          border: 2px solid #fff;
-          border-bottom-color: transparent;
-          border-radius: 50%;
-          animation: rotation 1s linear infinite;
-        }
-      }
-    }
-  }
+.chat-container .input-area .input-wrapper .send-btn:disabled {
+  background: #bae7ff;
+  cursor: not-allowed;
+}
+
+.chat-container .input-area .input-wrapper .send-btn .loader {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #fff;
+  border-bottom-color: transparent;
+  border-radius: 100%;
+  animation: rotation 1s linear infinite;
 }
 
 @keyframes fadeIn {
@@ -282,4 +295,5 @@ function logout(){
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
 </style>
