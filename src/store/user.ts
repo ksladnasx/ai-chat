@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import Login from '../views/Login.vue'
 
 // 用户状态管理
 export const useUserStore = defineStore('user', {

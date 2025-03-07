@@ -1,24 +1,36 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import Wrong from '../views/Wrong.vue'
+import Chat from '../views/Chat.vue'
+import Login from '../views/Login.vue'
+
+
+
+const routes = [
+  {
+    path: '/',
+    redirect: '/chat'
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
+  },
+  {
+    path: '/chat',
+    name: 'Chat',
+    component:Chat,
+    meta: { requiresAuth: true }
+  },
+  {
+    path:'/wrong',
+    name: 'Wrong',
+    component: Wrong
+  }
+]
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: [
-    {
-      path: '/',
-      redirect: '/chat'
-    },
-    {
-      path: '/login',
-      name: 'Login',
-      component: () => import('../views/Login.vue')
-    },
-    {
-      path: '/chat',
-      name: 'Chat',
-      component: () => import('../views/Chat.vue'),
-      meta: { requiresAuth: true }
-    }
-  ]
+  routes
 })
 
 // 路由守卫

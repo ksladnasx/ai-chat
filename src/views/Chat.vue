@@ -128,6 +128,10 @@ const formatMessageContent = (text: string) => {
 </template>
 
 <style>
+*{
+  /* 隐藏侧边栏的滚动条 */
+  scrollbar-width: none;
+}
 .chat-container {
   position: relative;
   left: 25%;
@@ -138,6 +142,7 @@ const formatMessageContent = (text: string) => {
   background: #f0f2f5;
   white-space: pre-wrap; 
   word-break: break-word; 
+  
 }
 
 .chat-container .chat-header {
