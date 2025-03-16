@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { useUserStore } from '../store/user'
-import axios from 'axios'
-import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
+
 const userStore = useUserStore()
 
-// 表单数据
+// 表单数据 
 const loginForm = ref({
   username: '',
   password: ''
@@ -16,20 +15,14 @@ const loginForm = ref({
 
 // 登录方法
 const handleLogin = async () => {
-  // 这里模拟登录验证，实际项目中需要替换为真实的API地址
-  if (loginForm.value.username === 'whwhwh' && loginForm.value.password === '88888888') {
-    try {
-      // const response = await axios.post('YOUR_LOGIN_API', loginForm.value)
-      userStore.setLoginState(true)
-      userStore.setUsername(loginForm.value.username)
-      ElMessage.success('登录成功')
-      router.push('/chat')
-    } catch (error) {
-      ElMessage.error('登录失败，请重试')
-    }
-  } else {
-    ElMessage.error('用户名或密码错误')
-  }
+  console.log(loginForm.value)
+  userStore.login(loginForm.value.username, loginForm.value.password)
+  router.push("/chat")
+}
+
+//注册方法
+const handleregister = async () => {
+  console.log('register')
 }
 </script>
 
@@ -49,9 +42,11 @@ const handleLogin = async () => {
           v-model="loginForm.password" 
           type="password" 
           placeholder="密码"
+          
         >
       </div>
       <button @click="handleLogin" class="login-btn">登录</button>
+      <button @click="handleregister" class='register-btn login-btn'>注册</button>
     </div>
   </div>
 </template>

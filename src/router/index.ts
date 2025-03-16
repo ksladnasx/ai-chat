@@ -35,7 +35,7 @@ const router = createRouter({
 
 // 路由守卫
 router.beforeEach ((to, _from, next) => {
-  const isAuthenticated = localStorage.getItem('isLogin')
+  const isAuthenticated = localStorage.getItem('userInfo')
   
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login')

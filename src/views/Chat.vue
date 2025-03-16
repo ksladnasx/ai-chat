@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useUserStore } from '../store/user'
-import axios from 'axios'
 import { useRouter } from 'vue-router'
+import axiosservice from '../utils/axios'
 
 const userStore = useUserStore()
-const messages = ref<Array<{type: 'user' | 'ai', content: string}>>([])
+const messages = ref<Array<{ type: 'user' | 'ai', content: string }>>([])
 const inputMessage = ref('')
 const loading = ref(false)
 const router = useRouter()
@@ -21,21 +21,21 @@ const scrollToBottom = () => {
 // 发送消息
 const sendMessage = async () => {
   if (!inputMessage.value.trim()) return
-  
+
   messages.value.push({
     type: 'user',
     content: inputMessage.value
   })
-  
+
   const userQuestion = inputMessage.value
   inputMessage.value = ''
   loading.value = true
-  
+
   try {
-    const response = await axios.post('YOUR_API_ENDPOINT', {
+    const response = await axiosservice.post('/chat', {
       message: userQuestion
     })
-    
+
     messages.value.push({
       type: 'ai',
       content: response.data.reply || '抱歉，我现在无法回答这个问题。'
@@ -63,7 +63,7 @@ const handleKeyPress = (e: KeyboardEvent) => {
   }
 }
 
-function logout(){
+function logout() {
   userStore.logout()
   router.push('/login')
 }
@@ -84,19 +84,15 @@ const formatMessageContent = (text: string) => {
     <div class="chat-header">
       <h2>AI 助手</h2>
       <div class="header-controls">
-        <span class="username">{{ userStore.username }}</span>
+        <span class="username">{{ userStore.$state.userInfo.username }}</span>
         <button @click="logout" class="logout-btn">退出登录</button>
       </div>
     </div>
-    
+
     <div class="messages-container" ref="messagesContainer">
-      <div 
-        v-for="(message, index) in messages" 
-        :key="index"
-        :class="['message-bubble', message.type]"
-      >
+      <div v-for="(message, index) in messages" :key="index" :class="['message-bubble', message.type]">
         <!-- 在模板部分修改消息内容渲染方式 -->
-<div class="message-content" v-html="formatMessageContent(message.content)"></div>
+        <div class="message-content" v-html="formatMessageContent(message.content)"></div>
       </div>
       <div v-if="loading" class="message-bubble ai">
         <div class="message-content loading">
@@ -104,22 +100,17 @@ const formatMessageContent = (text: string) => {
         </div>
       </div>
     </div>
-    
+
     <div class="input-area">
-      <div class="input-wrapper" >
-        <textarea
-          v-model="inputMessage"
-          @keypress="handleKeyPress"
-          placeholder="输入您的问题..."
-          rows="2"
-        ></textarea>
-        <button 
-          @click="sendMessage" 
-          :disabled="loading"
-          class="send-btn"
-          
-        >
-        <svg v-if="!loading" t="1741339017017" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5762" ><path d="M311.04 692.224L97.28 598.5792a38.0416 38.0416 0 0 1-3.6352-67.84l799.1808-457.472a38.0416 38.0416 0 0 1 56.6272 37.7856L854.016 866.8672a37.9904 37.9904 0 0 1-53.9136 29.6448l-223.5392-105.1648L471.04 937.9328a42.752 42.752 0 0 1-77.4656-25.0368l0.6656-190.5664 387.7376-455.0144z" fill="red" p-id="5763"></path></svg>
+      <div class="input-wrapper">
+        <textarea v-model="inputMessage" @keypress="handleKeyPress" placeholder="输入您的问题..." rows="2"></textarea>
+        <button @click="sendMessage" :disabled="loading" class="send-btn">
+          <svg v-if="!loading" t="1741339017017" class="icon" viewBox="0 0 1024 1024" version="1.1"
+            xmlns="http://www.w3.org/2000/svg" p-id="5762">
+            <path
+              d="M311.04 692.224L97.28 598.5792a38.0416 38.0416 0 0 1-3.6352-67.84l799.1808-457.472a38.0416 38.0416 0 0 1 56.6272 37.7856L854.016 866.8672a37.9904 37.9904 0 0 1-53.9136 29.6448l-223.5392-105.1648L471.04 937.9328a42.752 42.752 0 0 1-77.4656-25.0368l0.6656-190.5664 387.7376-455.0144z"
+              fill="red" p-id="5763"></path>
+          </svg>
           <div v-else class="loader"></div>
         </button>
       </div>
@@ -128,10 +119,11 @@ const formatMessageContent = (text: string) => {
 </template>
 
 <style>
-*{
+* {
   /* 隐藏侧边栏的滚动条 */
   scrollbar-width: none;
 }
+
 .chat-container {
   position: relative;
   left: 25%;
@@ -140,9 +132,9 @@ const formatMessageContent = (text: string) => {
   display: flex;
   flex-direction: column;
   background: #f0f2f5;
-  white-space: pre-wrap; 
-  word-break: break-word; 
-  
+  white-space: pre-wrap;
+  word-break: break-word;
+
 }
 
 .chat-container .chat-header {
@@ -292,13 +284,24 @@ const formatMessageContent = (text: string) => {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes rotation {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
+  0% {
+    transform: rotate(0deg);
+  }
 
+  100% {
+    transform: rotate(360deg);
+  }
+}
 </style>
